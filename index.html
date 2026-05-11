@@ -1,0 +1,2883 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Ficha de Estudo — Realidade Virtual e Realidade Aumentada</title>
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Merriweather:wght@700;900&family=Source+Sans+3:wght@400;600;700&display=swap");
+
+    :root {
+      --bg: #f5efe3;
+      --surface: #fffdf8;
+      --surface-soft: #fff8ef;
+      --ink: #231a13;
+      --muted: #6f6052;
+      --line: #e7d8c5;
+      --accent: #8f4d1f;
+      --accent-2: #0f645b;
+      --blue-soft: #eef4ff;
+      --green-soft: #e9f6ef;
+      --amber-soft: #fff2db;
+      --red-soft: #fff1ee;
+      --shadow: 0 14px 34px rgba(44, 29, 16, 0.12);
+      --radius: 16px;
+      --topbar-h: 70px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      height: 100%;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family: "Source Sans 3", "Segoe UI", sans-serif;
+      line-height: 1.62;
+      background:
+        radial-gradient(circle at 0% 0%, rgba(143, 77, 31, 0.12), transparent 28%),
+        radial-gradient(circle at 100% 0%, rgba(15, 100, 91, 0.1), transparent 24%),
+        var(--bg);
+      overflow: hidden;
+    }
+
+    .topbar {
+      height: var(--topbar-h);
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: rgba(255, 253, 248, 0.94);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .topbar-inner {
+      max-width: 1360px;
+      height: 100%;
+      margin: 0 auto;
+      padding: 0 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .brand {
+      font-family: "Merriweather", Georgia, serif;
+      font-weight: 900;
+      color: var(--accent);
+      letter-spacing: 0.01em;
+      font-size: 1.04rem;
+      white-space: nowrap;
+    }
+
+    .nav {
+      display: none;
+      gap: 8px;
+      overflow-x: auto;
+    }
+
+    .nav a {
+      text-decoration: none;
+      color: #2f3a44;
+      background: var(--surface-soft);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 7px 11px;
+      font-size: 0.84rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .book-app {
+      max-width: 1360px;
+      margin: 0 auto;
+      padding: 14px 18px 18px;
+      height: calc(100dvh - var(--topbar-h));
+      display: grid;
+      grid-template-columns: 300px minmax(0, 1fr);
+      gap: 16px;
+    }
+
+    .sidebar {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 14px;
+      overflow: auto;
+    }
+
+    .sidebar h2 {
+      font-family: "Merriweather", serif;
+      font-size: 1.02rem;
+      margin: 0 0 8px;
+      color: #302116;
+    }
+
+    .sidebar p {
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .sidebar-nav {
+      display: grid;
+      gap: 8px;
+    }
+
+    .sidebar-nav a {
+      text-decoration: none;
+      color: #2f2a24;
+      border: 1px solid var(--line);
+      background: var(--surface-soft);
+      border-radius: 12px;
+      padding: 9px 11px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      transition: 0.2s ease;
+    }
+
+    .sidebar-nav a:hover,
+    .sidebar-nav a.active {
+      border-color: rgba(143, 77, 31, 0.35);
+      color: var(--accent);
+      transform: translateX(2px);
+      background: #fff;
+    }
+
+    .viewer {
+      min-width: 0;
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr);
+      gap: 12px;
+    }
+
+    .viewer-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      background: linear-gradient(110deg, #2c1d12, #4a2f1b);
+      color: #f9ebd4;
+      border: 1px solid rgba(255, 238, 210, 0.24);
+      border-radius: 999px;
+      padding: 8px 10px;
+      box-shadow: 0 10px 22px rgba(31, 19, 10, 0.28);
+    }
+
+    .viewer-status {
+      font-weight: 600;
+      font-size: 0.92rem;
+      letter-spacing: 0.01em;
+      white-space: nowrap;
+    }
+
+    .viewer-preference {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      color: #f9ebd4;
+      font-size: 0.82rem;
+      white-space: nowrap;
+    }
+
+    .viewer-preference select {
+      appearance: none;
+      border: 1px solid rgba(255, 238, 210, 0.36);
+      background: rgba(255, 255, 255, 0.1);
+      color: #f9ebd4;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font: inherit;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .viewer-preference select option {
+      color: #261a12;
+      background: #fffaf2;
+    }
+
+    .viewer-toolbar button {
+      appearance: none;
+      border: 1px solid rgba(255, 238, 210, 0.36);
+      background: rgba(255, 255, 255, 0.08);
+      color: #f9ebd4;
+      border-radius: 999px;
+      padding: 8px 12px;
+      font: inherit;
+      cursor: pointer;
+    }
+
+    .viewer-toolbar button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .viewer-stage {
+      position: relative;
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      background: rgba(255, 252, 246, 0.6);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .book {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    .page {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      background: var(--surface);
+      border-radius: var(--radius);
+      padding: 0;
+      overflow: hidden;
+      transition: opacity 0.28s ease;
+    }
+
+    .page.active {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    .page-content {
+      width: 100%;
+      padding: clamp(18px, 2.2vw, 34px);
+      transform-origin: top left;
+      will-change: transform;
+    }
+
+    .viewer-stage.mode-reading .page.active {
+      overflow: auto;
+    }
+
+    .viewer-stage.mode-reading .page.active::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    .viewer-stage.mode-reading .page.active::-webkit-scrollbar-thumb {
+      background: rgba(143, 77, 31, 0.42);
+      border-radius: 999px;
+      border: 2px solid rgba(255, 251, 242, 0.85);
+    }
+
+    .viewer-stage.mode-reading .page.active::-webkit-scrollbar-track {
+      background: rgba(242, 229, 210, 0.55);
+      border-radius: 999px;
+    }
+
+    .viewer-stage.mode-fit .page.active {
+      overflow: hidden;
+    }
+
+    .page-content.tight-mode {
+      font-size: 0.94em;
+    }
+
+    .page-content.tight-mode h2 {
+      margin-bottom: 8px;
+      padding-bottom: 6px;
+    }
+
+    .page-content.tight-mode h3 {
+      margin-top: 12px;
+    }
+
+    .page-content.tight-mode p,
+    .page-content.tight-mode li {
+      margin-bottom: 6px;
+    }
+
+    .page-content.tight-mode .objective,
+    .page-content.tight-mode .mini-card,
+    .page-content.tight-mode .part,
+    .page-content.tight-mode .term,
+    .page-content.tight-mode .step,
+    .page-content.tight-mode .exercise,
+    .page-content.tight-mode .media,
+    .page-content.tight-mode .note,
+    .page-content.tight-mode .analogy,
+    .page-content.tight-mode .warning,
+    .page-content.tight-mode .practice,
+    .page-content.tight-mode .summary-box {
+      padding: 9px;
+    }
+
+    .scale-note {
+      position: absolute;
+      right: 12px;
+      bottom: 10px;
+      background: rgba(35, 26, 19, 0.72);
+      color: #fff;
+      border-radius: 999px;
+      padding: 4px 8px;
+      font-size: 0.74rem;
+      z-index: 20;
+      display: none;
+    }
+
+    .viewer-stage.is-scaled .scale-note {
+      display: inline-flex;
+    }
+
+    .cover {
+      min-height: 0;
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 20px;
+      align-items: start;
+      background:
+        radial-gradient(circle at 86% 14%, rgba(15, 100, 91, 0.08), transparent 30%),
+        radial-gradient(circle at 20% 0%, rgba(143, 77, 31, 0.09), transparent 30%),
+        var(--surface);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(143, 77, 31, 0.24);
+      background: var(--surface-soft);
+      color: var(--accent);
+      font-size: 0.84rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: "Merriweather", Georgia, serif;
+      margin: 0 0 10px;
+      line-height: 1.18;
+      color: #2a1f15;
+      text-wrap: balance;
+    }
+
+    h1 {
+      font-size: clamp(1.8rem, 4.6vw, 2.9rem);
+    }
+
+    h2 {
+      font-size: clamp(1.26rem, 2.4vw, 1.8rem);
+      border-bottom: 2px solid var(--line);
+      padding-bottom: 8px;
+      margin-bottom: 12px;
+    }
+
+    h3 {
+      font-size: clamp(1.05rem, 1.9vw, 1.3rem);
+      margin-top: 16px;
+    }
+
+    h4 {
+      font-size: 1rem;
+    }
+
+    p {
+      margin: 0 0 10px;
+      color: #312920;
+    }
+
+    .lead {
+      font-size: 1.06rem;
+      color: #44382d;
+      max-width: 760px;
+    }
+
+    figure {
+      margin: 0;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+      height: auto;
+    }
+
+    .cover-card,
+    .media,
+    .image-card {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 10px;
+    }
+
+    .image-card img,
+    .cover-card img,
+    .media img {
+      width: 100%;
+      border-radius: 10px;
+      background: #f8fbff;
+      border: 1px solid #e6eaf2;
+      padding: 8px;
+      max-height: 300px;
+      object-fit: contain;
+    }
+
+    figcaption {
+      color: var(--muted);
+      font-size: 0.81rem;
+      margin-top: 6px;
+    }
+
+    figcaption a,
+    .credits a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 14px;
+    }
+
+    .pill {
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: var(--surface-soft);
+      color: #3e3328;
+      font-weight: 600;
+      font-size: 0.82rem;
+      padding: 4px 8px;
+    }
+
+    .two-col,
+    .three-col,
+    .four-col,
+    .toc,
+    .objectives,
+    .media-grid,
+    .part-list,
+    .terms,
+    .steps {
+      display: grid;
+      gap: 10px;
+    }
+
+    .two-col {
+      grid-template-columns: minmax(0, 1fr) minmax(230px, 0.75fr);
+      align-items: start;
+    }
+
+    .three-col {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .four-col {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .toc {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      counter-reset: toc;
+    }
+
+    .toc a {
+      counter-increment: toc;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 12px;
+      padding: 10px;
+    }
+
+    .toc a::before {
+      content: counter(toc, decimal-leading-zero);
+      width: 30px;
+      height: 30px;
+      border-radius: 9px;
+      background: var(--accent);
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.74rem;
+      font-weight: 700;
+      flex: 0 0 auto;
+    }
+
+    .toc strong {
+      display: block;
+    }
+
+    .toc span {
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    .objectives {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .media-grid,
+    .part-list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .terms {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .objective,
+    .mini-card,
+    .part,
+    .term,
+    .step,
+    .exercise,
+    .media {
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 12px;
+      padding: 11px;
+    }
+
+    .objective .icon,
+    .mini-card .icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 9px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--blue-soft);
+      color: var(--accent);
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .part strong,
+    .term strong {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .note,
+    .analogy,
+    .warning,
+    .practice {
+      border-radius: 12px;
+      padding: 11px 13px;
+      margin: 12px 0;
+      border: 1px solid;
+    }
+
+    .note {
+      background: var(--blue-soft);
+      border-color: #ced9ee;
+    }
+
+    .analogy {
+      background: var(--green-soft);
+      border-color: #cce5d7;
+    }
+
+    .warning {
+      background: var(--amber-soft);
+      border-color: #efd4ab;
+    }
+
+    .practice {
+      background: var(--red-soft);
+      border-color: #edc8bf;
+    }
+
+    .label {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 0.74rem;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      font-weight: 700;
+      color: #4f4337;
+    }
+
+    ul,
+    ol {
+      margin: 0 0 10px;
+      padding-left: 1.15rem;
+    }
+
+    li {
+      margin-bottom: 5px;
+    }
+
+    .table-wrap {
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fff;
+      margin: 12px 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 0;
+      font-size: 0.92rem;
+    }
+
+    th,
+    td {
+      text-align: left;
+      padding: 8px 9px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+    }
+
+    th {
+      background: #f9f3ea;
+      color: #3f3327;
+      font-size: 0.83rem;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    .checklist {
+      list-style: none;
+      padding: 0;
+    }
+
+    .checklist li {
+      position: relative;
+      padding-left: 26px;
+      margin-bottom: 8px;
+    }
+
+    .checklist li::before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 18px;
+      height: 18px;
+      border-radius: 6px;
+      background: var(--green-soft);
+      color: var(--accent-2);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .steps {
+      counter-reset: step;
+    }
+
+    .step {
+      position: relative;
+      counter-increment: step;
+      padding-left: 46px;
+      min-height: 52px;
+    }
+
+    .step::before {
+      content: counter(step);
+      position: absolute;
+      left: 10px;
+      top: 10px;
+      width: 24px;
+      height: 24px;
+      border-radius: 8px;
+      background: var(--accent);
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .summary-box {
+      background: linear-gradient(130deg, #2a1b10, #3f2614);
+      color: #f2e8d9;
+      border-radius: 13px;
+      padding: 14px;
+      margin-top: 12px;
+    }
+
+    .summary-box h3 {
+      color: #fff;
+    }
+
+    .credits {
+      color: #4d4338;
+      font-size: 0.89rem;
+    }
+
+    .footer-note {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.84rem;
+      margin-top: 14px;
+    }
+
+    @media (max-width: 1080px) {
+      body {
+        overflow: auto;
+      }
+
+      .nav {
+        display: flex;
+      }
+
+      .book-app {
+        height: auto;
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        display: none;
+      }
+
+      .viewer-stage {
+        min-height: 75vh;
+      }
+
+      .two-col,
+      .three-col,
+      .four-col,
+      .toc,
+      .objectives,
+      .media-grid,
+      .part-list,
+      .terms {
+        grid-template-columns: 1fr;
+      }
+
+      .page {
+        position: relative;
+        inset: auto;
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+      }
+
+      .page-content {
+        transform: none !important;
+        width: auto !important;
+      }
+
+      .viewer-toolbar {
+        display: none;
+      }
+
+      .viewer-preference {
+        display: none;
+      }
+
+      .scale-note {
+        display: none !important;
+      }
+    }
+
+    @media print {
+      body {
+        overflow: visible;
+        background: #fff;
+      }
+
+      .topbar,
+      .sidebar,
+      .viewer-toolbar,
+      .scale-note {
+        display: none;
+      }
+
+      .book-app,
+      .viewer,
+      .viewer-stage,
+      .book {
+        display: block;
+        height: auto;
+        overflow: visible;
+        box-shadow: none;
+        border: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      .page {
+        position: static;
+        opacity: 1;
+        visibility: visible;
+        border: none;
+        box-shadow: none;
+        page-break-after: always;
+      }
+
+      .page-content {
+        transform: none !important;
+        width: auto !important;
+        padding: 20px;
+      }
+    }
+
+/* Paleta e ajustes de layout aplicados ao modelo da apostila de Informática Básica */
+:root {
+  --bg: #eef4ff;
+  --surface: #ffffff;
+  --surface-soft: #f7faff;
+  --ink: #172033;
+  --muted: #5f6d83;
+  --line: #dce5f2;
+  --accent: #246bfe;
+  --accent-2: #7b3ff2;
+  --blue-soft: #eaf1ff;
+  --green-soft: #e9fbf4;
+  --amber-soft: #fff5df;
+  --red-soft: #fff0f0;
+  --purple-soft: #f1ebff;
+  --cyan-soft: #e7fbff;
+  --shadow: 0 16px 42px rgba(25, 43, 75, 0.12);
+}
+
+body {
+  background:
+    radial-gradient(circle at 10% 0%, rgba(36, 107, 254, 0.16), transparent 30%),
+    radial-gradient(circle at 92% 0%, rgba(123, 63, 242, 0.14), transparent 28%),
+    linear-gradient(180deg, #f7faff 0%, var(--bg) 100%);
+}
+
+.brand,
+.nav a:hover,
+.nav a.active,
+.sidebar-nav a:hover,
+.sidebar-nav a.active,
+figcaption a,
+.credits a {
+  color: var(--accent);
+}
+
+.viewer-toolbar {
+  background: linear-gradient(110deg, #101828, #1d2a68 56%, #43218c);
+  color: #eef7ff;
+  border: 1px solid rgba(234, 241, 255, 0.24);
+}
+
+.viewer-status,
+.viewer-preference,
+.viewer-toolbar button {
+  color: #eef7ff;
+}
+
+.viewer-preference select {
+  color: #eef7ff;
+  border-color: rgba(234, 241, 255, 0.34);
+}
+
+.viewer-preference select option {
+  color: #172033;
+  background: #ffffff;
+}
+
+.viewer-toolbar button {
+  border-color: rgba(234, 241, 255, 0.34);
+}
+
+h1, h2, h3, h4 {
+  color: #101828;
+}
+
+h3 {
+  color: #1d2a68;
+}
+
+.lead {
+  color: #344054;
+}
+
+.kicker,
+.label {
+  color: var(--accent);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.78rem;
+}
+
+/* Capa temática XR redistribuída para o visualizador paginado */
+.page.xr-cover {
+  background:
+    radial-gradient(circle at 18% 18%, rgba(255, 255, 255, 0.20), transparent 16rem),
+    radial-gradient(circle at 86% 30%, rgba(0, 229, 255, 0.25), transparent 22rem),
+    linear-gradient(135deg, #111827 0%, #1d2a68 40%, #5d29d6 76%, #00a5c8 132%);
+  color: #ffffff;
+}
+
+.page.xr-cover::before {
+  content: "";
+  position: absolute;
+  inset: -90px -60px auto auto;
+  width: 380px;
+  height: 380px;
+  border: 30px solid rgba(255, 255, 255, 0.10);
+  border-radius: 50%;
+  transform: rotate(20deg);
+  pointer-events: none;
+}
+
+.page.xr-cover::after {
+  content: "";
+  position: absolute;
+  left: -90px;
+  bottom: -140px;
+  width: 380px;
+  height: 380px;
+  border: 42px solid rgba(255, 255, 255, 0.08);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.xr-cover .page-content {
+  height: 100%;
+  display: grid;
+  align-items: center;
+  padding: clamp(18px, 2.4vw, 34px);
+}
+
+.cover-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(260px, 0.95fr);
+  gap: clamp(18px, 3vw, 34px);
+  align-items: center;
+  position: relative;
+  z-index: 1;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  backdrop-filter: blur(12px);
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-size: 0.78rem;
+  color: #ffffff;
+  margin-bottom: 12px;
+}
+
+.xr-cover h1 {
+  color: #ffffff;
+  font-size: clamp(2rem, 4.2vw, 4.15rem);
+  line-height: 1.02;
+  letter-spacing: -0.045em;
+  margin: 0 0 14px;
+}
+
+.subtitle {
+  font-size: clamp(1rem, 1.7vw, 1.22rem);
+  color: rgba(255, 255, 255, 0.88);
+  max-width: 720px;
+  margin: 0 0 18px;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.meta span {
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  padding: 7px 10px;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.93);
+  font-size: 0.86rem;
+}
+
+.xr-hero {
+  position: relative;
+  width: 100%;
+  min-height: 290px;
+  display: grid;
+  place-items: center;
+}
+
+.hero-device {
+  position: relative;
+  width: min(340px, 92%);
+  height: 196px;
+  border-radius: 54px;
+  background: linear-gradient(145deg, #f9fbff, #c9d6e8);
+  box-shadow:
+    inset 0 -12px 30px rgba(16, 24, 40, 0.24),
+    0 30px 80px rgba(0, 0, 0, 0.30);
+  border: 2px solid rgba(255, 255, 255, 0.58);
+}
+
+.hero-device .visor {
+  position: absolute;
+  inset: 35px 32px;
+  border-radius: 40px;
+  background:
+    radial-gradient(circle at 25% 30%, rgba(255, 255, 255, 0.65), transparent 18%),
+    radial-gradient(circle at 78% 46%, rgba(0, 229, 255, 0.65), transparent 20%),
+    linear-gradient(135deg, #030712, #13204c 52%, #0e7490);
+  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.65);
+}
+
+.hero-device .lens {
+  position: absolute;
+  top: 70px;
+  width: 72px;
+  height: 54px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #8bf6ff, #2940a6 38%, #020617 72%);
+  opacity: 0.86;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+}
+
+.hero-device .lens.left {
+  left: 76px;
+}
+
+.hero-device .lens.right {
+  right: 76px;
+}
+
+.beam {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  animation: pulse 5s ease-in-out infinite;
+}
+
+.beam.b1 {
+  width: 170px;
+  height: 170px;
+  left: 0;
+  top: 10px;
+}
+
+.beam.b2 {
+  width: 240px;
+  height: 240px;
+  right: 0;
+  bottom: 0;
+  animation-delay: 1s;
+}
+
+.beam.b3 {
+  width: 120px;
+  height: 120px;
+  right: 58px;
+  top: 0;
+  animation-delay: 2s;
+}
+
+@keyframes pulse {
+  50% {
+    transform: scale(1.06);
+    opacity: 0.58;
+  }
+}
+
+
+/* Ajuste específico da capa: redistribuição sem depender de redução de zoom */
+@media (min-width: 1081px) {
+  .viewer-stage.mode-reading .page.xr-cover.active {
+    overflow: hidden;
+  }
+
+  .page.xr-cover .page-content {
+    height: 100%;
+    display: grid;
+    align-items: center;
+    padding: clamp(14px, 1.7vw, 26px);
+  }
+
+  .xr-cover .cover-grid {
+    grid-template-columns: minmax(0, 1.18fr) minmax(220px, 0.82fr);
+    gap: clamp(12px, 2vw, 24px);
+    align-items: center;
+    max-height: 100%;
+  }
+
+  .xr-cover .badge {
+    padding: 5px 10px;
+    font-size: 0.71rem;
+    margin-bottom: 8px;
+  }
+
+  .xr-cover .cover-title {
+    max-width: 650px;
+    font-size: clamp(1.72rem, 3.15vw, 3.25rem);
+    line-height: 0.98;
+    letter-spacing: -0.043em;
+    margin-bottom: 10px;
+  }
+
+  .xr-cover .cover-title span {
+    display: block;
+  }
+
+  .xr-cover .cover-title .title-connector {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.15em;
+    height: 1.22em;
+    margin: 0.05em 0 0.07em;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    background: rgba(255, 255, 255, 0.13);
+    color: rgba(255, 255, 255, 0.88);
+    font-family: "Source Sans 3", "Segoe UI", sans-serif;
+    font-size: 0.38em;
+    font-weight: 900;
+    letter-spacing: 0;
+    line-height: 1;
+    vertical-align: middle;
+  }
+
+  .xr-cover .subtitle {
+    max-width: 610px;
+    font-size: clamp(0.94rem, 1.2vw, 1.06rem);
+    line-height: 1.38;
+    margin-bottom: 10px;
+  }
+
+  .xr-cover .meta {
+    display: grid;
+    grid-template-columns: repeat(3, max-content);
+    gap: 6px;
+    margin-top: 10px;
+  }
+
+  .xr-cover .meta span {
+    padding: 5px 8px;
+    border-radius: 999px;
+    font-size: 0.76rem;
+    line-height: 1.15;
+    white-space: nowrap;
+  }
+
+  .xr-cover .xr-hero {
+    min-height: 225px;
+  }
+
+  .xr-cover .hero-device {
+    width: min(292px, 88%);
+    height: 168px;
+    border-radius: 44px;
+    box-shadow:
+      inset 0 -10px 24px rgba(16, 24, 40, 0.24),
+      0 22px 58px rgba(0, 0, 0, 0.28);
+  }
+
+  .xr-cover .hero-device .visor {
+    inset: 30px 28px;
+    border-radius: 34px;
+  }
+
+  .xr-cover .hero-device .lens {
+    top: 61px;
+    width: 62px;
+    height: 47px;
+  }
+
+  .xr-cover .hero-device .lens.left {
+    left: 66px;
+  }
+
+  .xr-cover .hero-device .lens.right {
+    right: 66px;
+  }
+
+  .xr-cover .beam.b1 {
+    width: 132px;
+    height: 132px;
+    left: 8px;
+    top: 12px;
+  }
+
+  .xr-cover .beam.b2 {
+    width: 190px;
+    height: 190px;
+    right: 8px;
+    bottom: 4px;
+  }
+
+  .xr-cover .beam.b3 {
+    width: 96px;
+    height: 96px;
+    right: 54px;
+    top: 2px;
+  }
+
+  .page.xr-cover::before {
+    width: 310px;
+    height: 310px;
+    border-width: 24px;
+  }
+
+  .page.xr-cover::after {
+    width: 300px;
+    height: 300px;
+    border-width: 34px;
+  }
+}
+
+@media (max-width: 1080px) {
+  .xr-cover .cover-title {
+    font-size: clamp(2rem, 8vw, 3.2rem);
+    line-height: 1.02;
+  }
+
+  .xr-cover .cover-title span {
+    display: block;
+  }
+
+  .xr-cover .cover-title .title-connector {
+    display: inline-flex;
+    width: 2.2em;
+    height: 1.25em;
+    margin: 0.08em 0;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    background: rgba(255, 255, 255, 0.13);
+    color: rgba(255, 255, 255, 0.88);
+    font-family: "Source Sans 3", "Segoe UI", sans-serif;
+    font-size: 0.4em;
+    font-weight: 900;
+    letter-spacing: 0;
+    line-height: 1.2;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .xr-cover .meta {
+    display: flex;
+    flex-wrap: wrap;
+  }
+}
+
+/* Componentes visuais específicos da apostila de RV/AR */
+.muted {
+  color: var(--muted);
+}
+
+.small {
+  font-size: 0.92rem;
+}
+
+.toc {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.toc a {
+  align-items: center;
+  min-height: 78px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 16px 0;
+}
+
+.grid.two {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.grid.four {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.card {
+  background: linear-gradient(180deg, #ffffff, #fbfdff);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 13px;
+  box-shadow: 0 10px 26px rgba(31, 41, 55, 0.06);
+}
+
+.card h3,
+.card h4 {
+  margin-top: 0;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 9px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: #1d2a68;
+  background: var(--blue-soft);
+  border: 1px solid #cbd9ff;
+  margin-bottom: 8px;
+}
+
+.pill.purple {
+  background: var(--purple-soft);
+  border-color: #dbcfff;
+  color: #43218c;
+}
+
+.pill.cyan {
+  background: var(--cyan-soft);
+  border-color: #b9f0f8;
+  color: #075d70;
+}
+
+.pill.green {
+  background: var(--green-soft);
+  border-color: #bff2dd;
+  color: #05603a;
+}
+
+.pill.orange {
+  background: var(--amber-soft);
+  border-color: #ffe0a3;
+  color: #92400e;
+}
+
+.pill.red {
+  background: var(--red-soft);
+  border-color: #ffd0d0;
+  color: #991b1b;
+}
+
+.note,
+.warning,
+.task,
+.definition {
+  padding: 13px 15px;
+  border-radius: 13px;
+  margin: 14px 0;
+  border: 1px solid;
+}
+
+.note {
+  background: var(--blue-soft);
+  border-color: #cbd9ff;
+}
+
+.definition {
+  background: var(--purple-soft);
+  border-color: #dfd2ff;
+}
+
+.task {
+  background: var(--green-soft);
+  border-color: #c8f2df;
+}
+
+.warning {
+  background: var(--amber-soft);
+  border-color: #ffe0a3;
+}
+
+.note strong,
+.warning strong,
+.task strong,
+.definition strong {
+  color: #111827;
+}
+
+.callout-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 900;
+  margin-bottom: 6px;
+  color: #111827;
+}
+
+.diagram {
+  margin: 16px 0;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(248, 251, 255, 0.95)),
+    radial-gradient(circle at 20% 20%, rgba(36, 107, 254, 0.10), transparent 18rem);
+  padding: 14px;
+  overflow: hidden;
+}
+
+.diagram-title {
+  font-weight: 900;
+  color: #172033;
+  margin-bottom: 10px;
+}
+
+.timeline {
+  position: relative;
+  display: grid;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.timeline::before {
+  content: "";
+  position: absolute;
+  left: 18px;
+  top: 8px;
+  bottom: 8px;
+  width: 3px;
+  background: #cbd9ff;
+  border-radius: 20px;
+}
+
+.time-item {
+  position: relative;
+  padding: 12px 14px 12px 54px;
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  box-shadow: 0 8px 22px rgba(25, 43, 75, 0.05);
+}
+
+.time-item::before {
+  content: "";
+  position: absolute;
+  left: 10px;
+  top: 18px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 4px solid #eaf1ff;
+}
+
+.time-item strong {
+  display: block;
+  color: #172033;
+}
+
+.visual-xr {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.xr-box {
+  min-height: 166px;
+  border-radius: 15px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.mini-world {
+  height: 78px;
+  border-radius: 13px;
+  background: #eaf1ff;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #cbd9ff;
+}
+
+.real-desk {
+  position: absolute;
+  left: 18px;
+  right: 18px;
+  bottom: 16px;
+  height: 14px;
+  background: #8b5e3c;
+  border-radius: 8px;
+}
+
+.real-desk::after {
+  content: "";
+  position: absolute;
+  left: 22px;
+  top: -28px;
+  width: 42px;
+  height: 28px;
+  border-radius: 8px;
+  background: #64748b;
+}
+
+.cube {
+  position: absolute;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #00a5c8, #7b3ff2);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.18);
+}
+
+.cube.c1 {
+  left: 22px;
+  bottom: 30px;
+}
+
+.cube.c2 {
+  right: 24px;
+  top: 20px;
+}
+
+.full-vr {
+  background: linear-gradient(135deg, #061029, #2140a1);
+}
+
+.full-vr .cube {
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 58px;
+  height: 58px;
+}
+
+.full-vr::before {
+  content: "";
+  position: absolute;
+  inset: 12px;
+  border: 1px dashed rgba(255, 255, 255, 0.28);
+  border-radius: 16px;
+}
+
+.mixed .cube {
+  right: 28px;
+  bottom: 34px;
+}
+
+.mixed::after {
+  content: "";
+  position: absolute;
+  left: 18px;
+  top: 16px;
+  width: 46px;
+  height: 30px;
+  border-radius: 50%;
+  border: 3px solid rgba(36, 107, 254, 0.50);
+}
+
+.smart .cube {
+  left: 58px;
+  bottom: 30px;
+  width: 32px;
+  height: 32px;
+}
+
+.smart::after {
+  content: "";
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  width: 30px;
+  height: 48px;
+  border-radius: 10px;
+  background: #172033;
+}
+
+.setup-map {
+  display: grid;
+  grid-template-columns: 1fr 0.9fr;
+  gap: 14px;
+  align-items: stretch;
+}
+
+.room {
+  min-height: 300px;
+  border-radius: 18px;
+  background:
+    linear-gradient(135deg, rgba(36, 107, 254, 0.08), rgba(0, 165, 200, 0.10)),
+    repeating-linear-gradient(0deg, #f8fbff, #f8fbff 32px, #eef4ff 33px);
+  border: 1px solid var(--line);
+  position: relative;
+  overflow: hidden;
+}
+
+.room .safe {
+  position: absolute;
+  inset: 40px 50px;
+  border: 4px dashed #00a870;
+  border-radius: 22px;
+  background: rgba(0, 168, 112, 0.08);
+  display: grid;
+  place-items: center;
+  color: #05603a;
+  font-weight: 900;
+  text-align: center;
+  padding: 18px;
+}
+
+.room .sofa {
+  position: absolute;
+  left: 20px;
+  bottom: 26px;
+  width: 120px;
+  height: 46px;
+  border-radius: 18px;
+  background: #adb9ce;
+}
+
+.room .table {
+  position: absolute;
+  right: 24px;
+  bottom: 30px;
+  width: 74px;
+  height: 74px;
+  border-radius: 50%;
+  background: #b88958;
+}
+
+.room .lamp {
+  position: absolute;
+  right: 30px;
+  top: 28px;
+  width: 12px;
+  height: 105px;
+  background: #64748b;
+  border-radius: 99px;
+}
+
+.room .lamp::before {
+  content: "";
+  position: absolute;
+  left: -22px;
+  top: -18px;
+  width: 56px;
+  height: 36px;
+  border-radius: 36px 36px 8px 8px;
+  background: #fbbf24;
+}
+
+.device-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin: 16px 0;
+}
+
+.device-icon {
+  height: 122px;
+  display: grid;
+  place-items: center;
+  border-radius: 16px;
+  background: #f7faff;
+  border: 1px solid var(--line);
+  position: relative;
+  overflow: hidden;
+}
+
+.icon-headset {
+  width: 150px;
+  height: 80px;
+  border-radius: 36px;
+  background: #e5edf9;
+  border: 2px solid #cbd5e1;
+  position: relative;
+  box-shadow: inset 0 -10px 18px rgba(30, 41, 59, 0.18);
+}
+
+.icon-headset::before {
+  content: "";
+  position: absolute;
+  inset: 18px 26px;
+  border-radius: 24px;
+  background: #0f172a;
+}
+
+.icon-headset::after {
+  content: "";
+  position: absolute;
+  left: -28px;
+  right: -28px;
+  top: 20px;
+  height: 34px;
+  border: 7px solid #94a3b8;
+  border-bottom: 0;
+  border-radius: 34px 34px 0 0;
+}
+
+.icon-phone {
+  width: 58px;
+  height: 108px;
+  border-radius: 16px;
+  background: #111827;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
+  position: relative;
+}
+
+.icon-phone::before {
+  content: "";
+  position: absolute;
+  inset: 8px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #dbeafe, #a7f3d0);
+}
+
+.icon-phone::after {
+  content: "AR";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-weight: 900;
+  color: #1d4ed8;
+}
+
+.icon-glasses {
+  width: 170px;
+  height: 58px;
+  position: relative;
+}
+
+.icon-glasses::before,
+.icon-glasses::after {
+  content: "";
+  position: absolute;
+  top: 12px;
+  width: 62px;
+  height: 38px;
+  border: 5px solid #111827;
+  border-radius: 16px;
+  background: rgba(36, 107, 254, 0.10);
+}
+
+.icon-glasses::before {
+  left: 12px;
+}
+
+.icon-glasses::after {
+  right: 12px;
+}
+
+.icon-glasses span {
+  position: absolute;
+  left: 72px;
+  right: 72px;
+  top: 30px;
+  height: 5px;
+  background: #111827;
+}
+
+
+.device-icon {
+  background: linear-gradient(180deg, #f7faff 0%, #eef4ff 100%);
+}
+
+.device-icon .device-svg-wrap {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  padding: 8px 10px;
+}
+
+.device-icon svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.device-shadow {
+  filter: drop-shadow(0 10px 16px rgba(15, 23, 42, 0.16));
+}
+
+.steps {
+  counter-reset: step;
+  display: grid;
+  gap: 10px;
+  margin: 16px 0;
+}
+
+.steps .step {
+  counter-increment: step;
+  display: grid;
+  grid-template-columns: 42px 1fr;
+  gap: 14px;
+  align-items: start;
+  padding: 13px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #ffffff;
+  position: relative;
+  min-height: 0;
+}
+
+.steps .step::before {
+  content: counter(step);
+  position: static;
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  background: #1d4ed8;
+  color: #ffffff;
+  display: grid;
+  place-items: center;
+  font-weight: 900;
+  font-size: 0.95rem;
+}
+
+.steps .step strong {
+  display: block;
+  color: #172033;
+  margin-bottom: 3px;
+}
+
+.checklist {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin: 16px 0;
+  list-style: none;
+  padding: 0;
+}
+
+.check {
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #ffffff;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.check::before {
+  content: "✓";
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #dcfce7;
+  color: #166534;
+  display: grid;
+  place-items: center;
+  font-weight: 900;
+  flex: 0 0 auto;
+}
+
+.glossary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.glossary .term {
+  padding: 13px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #ffffff;
+}
+
+.glossary .term strong {
+  display: block;
+  color: #172033;
+  margin-bottom: 4px;
+}
+
+.references {
+  font-size: 0.9rem;
+  overflow-wrap: anywhere;
+}
+
+.references li {
+  margin-bottom: 8px;
+}
+
+code {
+  background: #eef4ff;
+  color: #1d4ed8;
+  padding: 0.15rem 0.35rem;
+  border-radius: 7px;
+  font-weight: 700;
+}
+
+table {
+  font-size: 0.9rem;
+}
+
+th {
+  background: #f2f6ff;
+  color: #172033;
+}
+
+.page-content.tight-mode .grid,
+.page-content.tight-mode .timeline,
+.page-content.tight-mode .checklist,
+.page-content.tight-mode .device-row {
+  gap: 8px;
+  margin: 10px 0;
+}
+
+.page-content.tight-mode .card,
+.page-content.tight-mode .note,
+.page-content.tight-mode .warning,
+.page-content.tight-mode .task,
+.page-content.tight-mode .definition,
+.page-content.tight-mode .diagram,
+.page-content.tight-mode .term,
+.page-content.tight-mode .step {
+  padding: 9px;
+}
+
+.page-content.tight-mode .xr-box {
+  min-height: 136px;
+  padding: 9px;
+}
+
+.page-content.tight-mode .mini-world {
+  height: 66px;
+}
+
+@media (max-width: 1080px) {
+  .cover-grid,
+  .setup-map,
+  .grid,
+  .grid.two,
+  .grid.four,
+  .toc,
+  .visual-xr,
+  .device-row,
+  .checklist,
+  .glossary {
+    grid-template-columns: 1fr;
+  }
+
+  .page.xr-cover::before,
+  .page.xr-cover::after {
+    opacity: 0.55;
+  }
+
+  .xr-hero {
+    min-height: 245px;
+  }
+
+  .hero-device {
+    transform: scale(0.86);
+  }
+
+  table {
+    display: block;
+    overflow-x: auto;
+    white-space: normal;
+  }
+}
+
+@media print {
+  .page.xr-cover {
+    color: #ffffff;
+    background: #16213e;
+  }
+
+  .card,
+  .note,
+  .warning,
+  .task,
+  .definition,
+  .diagram,
+  .step,
+  .term {
+    break-inside: avoid;
+  }
+}
+  
+
+/* Componentes de ficha de estudo: respostas editáveis, revisão e atividades */
+.study-banner {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(250px, 0.85fr);
+  gap: 16px;
+  align-items: stretch;
+  margin: 14px 0;
+}
+.study-panel,
+.answer-card,
+.review-card,
+.lab-card,
+.project-card {
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 14px;
+  box-shadow: 0 10px 26px rgba(25, 43, 75, 0.055);
+}
+.study-panel h3,
+.answer-card h3,
+.review-card h3,
+.lab-card h3,
+.project-card h3 {
+  margin-top: 0;
+}
+.study-steps {
+  counter-reset: studyStep;
+  display: grid;
+  gap: 10px;
+  margin: 14px 0;
+}
+.study-step {
+  counter-increment: studyStep;
+  display: grid;
+  grid-template-columns: 42px 1fr;
+  gap: 12px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 12px;
+}
+.study-step::before {
+  content: counter(studyStep);
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: #fff;
+  font-weight: 900;
+}
+.answer-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 14px 0;
+}
+.answer-card strong {
+  color: #1d2a68;
+}
+.answer-box {
+  min-height: 86px;
+  width: 100%;
+  margin-top: 10px;
+  padding: 12px;
+  border: 1px dashed rgba(36, 107, 254, 0.45);
+  border-radius: 12px;
+  background:
+    repeating-linear-gradient(180deg, #ffffff 0 32px, #eef4ff 33px 34px);
+  color: #172033;
+  outline: none;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.answer-box:focus {
+  border-style: solid;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(36, 107, 254, 0.16);
+}
+.answer-box:empty::before {
+  content: attr(data-placeholder);
+  color: #7a879a;
+}
+.save-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+.save-hint::before { content: "●"; color: #16a34a; }
+.concept-map {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin: 14px 0;
+}
+.concept-node {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 12px;
+  min-height: 132px;
+  position: relative;
+}
+.concept-node b {
+  display: inline-flex;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  background: var(--accent);
+  margin-bottom: 6px;
+}
+.memory-table td:first-child,
+.memory-table th:first-child { width: 26%; }
+.rubric {
+  display: grid;
+  gap: 9px;
+  margin: 12px 0;
+}
+.rubric-row {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  gap: 12px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 10px;
+}
+.badge-soft {
+  display: inline-flex;
+  width: max-content;
+  max-width: 100%;
+  padding: 5px 9px;
+  border-radius: 999px;
+  background: var(--blue-soft);
+  border: 1px solid #cbd9ff;
+  color: #1d2a68;
+  font-weight: 900;
+  margin-bottom: 8px;
+  font-size: .82rem;
+}
+.svg-study {
+  width: 100%;
+  max-width: 780px;
+  display: block;
+  margin: 10px auto;
+}
+.svg-text { font: 700 14px "Source Sans 3", "Segoe UI", sans-serif; fill: #172033; }
+.svg-small { font: 600 12px "Source Sans 3", "Segoe UI", sans-serif; fill: #5f6d83; }
+@media (max-width: 1080px) {
+  .study-banner,
+  .answer-grid,
+  .concept-map,
+  .rubric-row { grid-template-columns: 1fr; }
+}
+@media print {
+  .answer-box { min-height: 95px; break-inside: avoid; }
+  .answer-card, .study-panel, .review-card, .lab-card, .project-card { break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+<header class="topbar">
+<div class="topbar-inner">
+<div class="brand">Ficha de Estudo — Realidade Virtual e Aumentada</div>
+<nav aria-label="Navegação da apostila" class="nav"><a href="#sumario">Sumário</a><a href="#diagnostico">Diagnóstico</a><a href="#conceitos">Conceitos</a><a href="#diferencas">VR/AR/MR/XR</a><a href="#funcionamento">Funcionamento</a><a href="#dispositivos">Dispositivos</a><a href="#seguranca">Segurança</a><a href="#atividades">Atividades</a><a href="#glossario">Glossário</a></nav>
+</div>
+</header>
+<main class="book-app">
+<aside aria-label="Sumário lateral" class="sidebar">
+<h2>Sumário</h2>
+<p>Selecione um capítulo para exibir no painel de leitura.</p>
+<nav class="sidebar-nav" id="sidebarNav"><a href="#capa">Capa</a><a href="#orientacoes">Orientações de estudo</a><a href="#diagnostico">Diagnóstico inicial</a><a href="#sumario">Sumário</a><a href="#conceitos">1. Conceitos fundamentais</a><a href="#diferencas">2. Diferenças entre VR, AR, MR e XR</a><a href="#funcionamento">3. Como as tecnologias imersivas funcionam</a><a href="#historia">4. Breve história das tecnologias imersivas</a><a href="#dispositivos">5. Dispositivos e equipamentos</a><a href="#plataformas">6. Plataformas e ecossistemas</a><a href="#aplicacoes">7. Aplicações práticas no cotidiano</a><a href="#seguranca">8. Segurança, conforto e privacidade</a><a href="#tutoriais">9. Práticas guiadas de uso</a><a href="#escolha">10. Como escolher o recurso adequado</a><a href="#estudo">11. Estudo dirigido e revisão</a><a href="#atividades">12. Atividades práticas</a><a href="#projeto">13. Projeto final</a><a href="#autoavaliacao">14. Autoavaliação</a><a href="#glossario">15. Glossário básico</a><a href="#referencias">Referências utilizadas</a></nav>
+</aside>
+<section aria-label="Área de exibição da apostila" class="viewer">
+<div class="viewer-toolbar">
+<button id="prevPage" type="button">◀ Anterior</button>
+<div class="viewer-status" id="viewerStatus">Capítulo 1 de 1</div>
+<label class="viewer-preference" for="scalePreference">
+          Exibição:
+          <select id="scalePreference">
+<option selected="" value="reading">Modo leitura</option>
+<option value="fit">Modo reduzido</option>
+</select>
+</label>
+<button id="nextPage" type="button">Próximo ▶</button>
+</div>
+<div class="viewer-stage" id="viewerStage">
+<div class="scale-note" id="scaleNote">Ajuste automático para caber na tela</div>
+<div class="book" id="bookPages"><section class="page cover xr-cover" id="capa">
+<div class="cover-grid">
+<div>
+<span class="badge">Ficha de estudo • Nível iniciante</span>
+<h1 class="cover-title"><span>Realidade Virtual</span><span class="title-connector">e</span><span>Realidade Aumentada</span></h1>
+<p class="subtitle">Roteiro amplo e detalhado para estudar VR, AR, MR e XR, compreender dispositivos, reconhecer usos práticos, analisar riscos e realizar atividades guiadas.</p>
+<div class="meta">
+<span>Conceitos-chave</span>
+<span>Atividades práticas</span>
+<span>Respostas salvas no navegador</span>
+</div>
+</div>
+<div aria-label="Ilustração de headset de realidade estendida" class="xr-hero">
+<div class="beam b1"></div><div class="beam b2"></div><div class="beam b3"></div>
+<div class="hero-device"><div class="visor"></div><div class="lens left"></div><div class="lens right"></div></div>
+</div>
+</div>
+</section><section class="page" id="orientacoes">
+<div class="kicker">Antes de estudar</div>
+<h2>Orientações de estudo</h2>
+<p class="lead">Esta ficha transforma o conteúdo da apostila em um percurso ativo de aprendizagem. O aluno não deve apenas ler: deve comparar conceitos, responder perguntas, observar exemplos, preencher quadros e realizar pequenas práticas com smartphone, computador ou headset, quando disponível.</p>
+<div class="study-banner">
+<div class="study-panel">
+<h3>Como usar a ficha</h3>
+<div class="study-steps">
+<div class="study-step"><div><strong>Leia o objetivo da seção.</strong><br/>Antes de decorar termos, identifique o que você precisa compreender ao final da página.</div></div>
+<div class="study-step"><div><strong>Preencha os espaços de resposta.</strong><br/>As caixas são editáveis. Clique, digite e altere quando quiser. A resposta fica armazenada no navegador.</div></div>
+<div class="study-step"><div><strong>Faça as práticas guiadas.</strong><br/>Quando houver um aplicativo ou dispositivo disponível, realize a atividade em ambiente seguro.</div></div>
+<div class="study-step"><div><strong>Revise com o glossário.</strong><br/>Volte aos termos técnicos sempre que encontrar palavras como imersão, rastreamento, latência, passthrough ou mapeamento espacial.</div></div>
+</div>
+</div>
+<div class="study-panel">
+<h3>Objetivos gerais</h3>
+<ul class="checklist">
+<li>Explicar a diferença entre realidade virtual, aumentada, mista e estendida.</li>
+<li>Reconhecer dispositivos, sensores, controles e plataformas de uso comum.</li>
+<li>Identificar aplicações em educação, saúde, trabalho, turismo, comércio e entretenimento.</li>
+<li>Aplicar cuidados de segurança física, conforto visual, privacidade e proteção de dados.</li>
+<li>Planejar uma experiência simples de uso educacional ou cotidiano.</li>
+</ul>
+</div>
+</div>
+<div class="note"><div class="callout-title">Importante</div><p>As respostas digitadas ficam salvas no armazenamento local do navegador. Elas não são enviadas para servidor. Se o aluno trocar de dispositivo, navegador ou limpar os dados do navegador, as respostas podem desaparecer.</p></div>
+</section><section class="page" id="diagnostico">
+<div class="kicker">Diagnóstico inicial</div>
+<h2>O que você já sabe?</h2>
+<p class="lead">Responda antes de estudar. O objetivo não é acertar tudo, mas identificar conhecimentos prévios, dúvidas e temas que precisam de reforço.</p>
+<div class="answer-grid">
+<div class="answer-card"><strong>1. O que você entende por realidade virtual?</strong><div class="answer-box" contenteditable="true" data-placeholder="Resposta do aluno..." data-save-id="rv-diagnostico-1" role="textbox"></div><span class="save-hint">Salvo automaticamente neste navegador</span></div>
+<div class="answer-card"><strong>2. Qual é a diferença entre ver algo pela câmera do celular e entrar em um ambiente virtual?</strong><div class="answer-box" contenteditable="true" data-placeholder="Resposta do aluno..." data-save-id="rv-diagnostico-2" role="textbox"></div><span class="save-hint">Salvo automaticamente neste navegador</span></div>
+<div class="answer-card"><strong>3. Cite um exemplo de uso de realidade aumentada no cotidiano.</strong><div class="answer-box" contenteditable="true" data-placeholder="Resposta do aluno..." data-save-id="rv-diagnostico-3" role="textbox"></div><span class="save-hint">Salvo automaticamente neste navegador</span></div>
+<div class="answer-card"><strong>4. Quais cuidados você imagina que uma pessoa deve ter ao usar um headset?</strong><div class="answer-box" contenteditable="true" data-placeholder="Resposta do aluno..." data-save-id="rv-diagnostico-4" role="textbox"></div><span class="save-hint">Salvo automaticamente neste navegador</span></div>
+</div>
+</section><section class="page" id="sumario">
+<div class="kicker">Organização da ficha</div>
+<h2>Sumário</h2>
+<p class="lead">A ficha está organizada do conceito mais simples para a aplicação prática. O menu lateral usa número e título para facilitar a localização rápida das seções.</p>
+<nav class="toc">
+<a href="#conceitos"><strong>1. Conceitos fundamentais</strong><span>Imersão, presença, interação e conteúdo digital no espaço.</span></a>
+<a href="#diferencas"><strong>2. Diferenças entre VR, AR, MR e XR</strong><span>Comparação direta entre os tipos de experiência imersiva.</span></a>
+<a href="#funcionamento"><strong>3. Como as tecnologias imersivas funcionam</strong><span>Telas, lentes, sensores, rastreamento, áudio e latência.</span></a>
+<a href="#historia"><strong>4. Breve história das tecnologias imersivas</strong><span>Da simulação inicial aos headsets modernos e à computação espacial.</span></a>
+<a href="#dispositivos"><strong>5. Dispositivos e equipamentos</strong><span>Smartphone, headsets, óculos inteligentes, controles e sensores.</span></a>
+<a href="#plataformas"><strong>6. Plataformas e ecossistemas</strong><span>Lojas, aplicativos, engines, navegadores e ambientes de criação.</span></a>
+<a href="#aplicacoes"><strong>7. Aplicações práticas no cotidiano</strong><span>Educação, saúde, treinamento, comércio, turismo e entretenimento.</span></a>
+<a href="#seguranca"><strong>8. Segurança, conforto e privacidade</strong><span>Área livre, enjoo, pausas, idade, dados e permissões.</span></a>
+<a href="#tutoriais"><strong>9. Práticas guiadas de uso</strong><span>Roteiros para smartphone com AR, headset VR e experiência mista.</span></a>
+<a href="#escolha"><strong>10. Como escolher o recurso adequado</strong><span>Critérios para decidir entre VR, AR, MR ou recurso tradicional.</span></a>
+<a href="#estudo"><strong>11. Estudo dirigido e revisão</strong><span>Quadros de síntese para consolidar o conteúdo.</span></a>
+<a href="#atividades"><strong>12. Atividades práticas</strong><span>Exercícios de observação, comparação, análise e planejamento.</span></a>
+<a href="#projeto"><strong>13. Projeto final</strong><span>Planejamento de uma experiência imersiva para aula, trabalho ou demonstração.</span></a>
+<a href="#autoavaliacao"><strong>14. Autoavaliação</strong><span>Checklist para verificar domínio conceitual e prático.</span></a>
+<a href="#glossario"><strong>15. Glossário básico</strong><span>Termos essenciais da realidade estendida.</span></a>
+<a href="#referencias"><strong>Referências utilizadas</strong><span>Base do conteúdo adaptado.</span></a>
+</nav>
+</section><section class="page" id="conceitos">
+<div class="kicker">1. Conceitos fundamentais</div>
+<h2>Conceitos fundamentais</h2>
+<p class="lead">Tecnologias imersivas são formas de interação digital que alteram a percepção do espaço. Em vez de apenas olhar para uma tela, o usuário passa a perceber objetos, ambientes e informações digitais como se estivessem ao seu redor ou sobrepostos ao mundo real.</p>
+<div class="definition"><div class="callout-title">Conceito-chave</div><p>A pergunta central das tecnologias imersivas é: <strong>como integrar conteúdo digital à percepção espacial do usuário?</strong> A resposta muda conforme a tecnologia usada: VR substitui o ambiente; AR adiciona camadas digitais; MR mistura e ancora objetos digitais no espaço; XR engloba todas essas possibilidades.</p></div>
+<div class="concept-map">
+<div class="concept-node"><b>1</b><h3>Imersão</h3><p>Sensação de estar envolvido por um ambiente ou conteúdo digital. Quanto mais visão, som e interação trabalham juntos, maior tende a ser a imersão.</p></div>
+<div class="concept-node"><b>2</b><h3>Presença</h3><p>Percepção psicológica de “estar lá”. Mesmo sabendo que é uma simulação, o corpo reage como se estivesse dentro da experiência.</p></div>
+<div class="concept-node"><b>3</b><h3>Interação</h3><p>Capacidade de tocar, apontar, mover, selecionar ou alterar objetos digitais usando controles, mãos, olhos, voz ou movimento corporal.</p></div>
+<div class="concept-node"><b>4</b><h3>Contexto real</h3><p>Parte do mundo físico que pode ser vista, mapeada, ampliada ou substituída, dependendo do tipo de experiência.</p></div>
+</div>
+<div class="answer-card"><strong>Atividade rápida:</strong> explique, com suas palavras, por que uma experiência imersiva é diferente de assistir a um vídeo comum em uma tela plana.<div class="answer-box" contenteditable="true" data-placeholder="Digite sua explicação..." data-save-id="rv-conceitos-atividade" role="textbox"></div><span class="save-hint">Salvo automaticamente neste navegador</span></div>
+</section><section class="page" id="diferencas">
+<div class="kicker">2. Comparação</div>
+<h2>Diferenças entre VR, AR, MR e XR</h2>
+<p class="lead">O erro mais comum é tratar todos os termos como sinônimos. Eles pertencem à mesma família tecnológica, mas cada um descreve uma relação diferente entre mundo físico, conteúdo digital e forma de interação.</p>
+<div class="diagram">
+<div class="diagram-title">Mapa didático: do mundo real ao ambiente totalmente virtual</div>
+<svg aria-label="Linha comparativa entre mundo real, AR, MR e VR" class="svg-study" role="img" viewbox="0 0 860 260">
+<defs><lineargradient id="xrGrad" x1="0" x2="1"><stop offset="0" stop-color="#eef4ff"></stop><stop offset="0.35" stop-color="#e7fbff"></stop><stop offset="0.68" stop-color="#f1ebff"></stop><stop offset="1" stop-color="#e9fbf4"></stop></lineargradient></defs>
+<rect fill="url(#xrGrad)" height="116" rx="28" stroke="#cbd9ff" width="820" x="20" y="34"></rect>
+<line stroke="#246bfe" stroke-linecap="round" stroke-width="6" x1="90" x2="770" y1="92" y2="92"></line>
+<circle cx="110" cy="92" fill="#172033" r="24"></circle><circle cx="300" cy="92" fill="#00a5c8" r="24"></circle><circle cx="500" cy="92" fill="#7b3ff2" r="24"></circle><circle cx="750" cy="92" fill="#246bfe" r="24"></circle>
+<text fill="#fff" font-weight="900" text-anchor="middle" x="110" y="98">R</text><text fill="#fff" font-weight="900" text-anchor="middle" x="300" y="98">AR</text><text fill="#fff" font-weight="900" text-anchor="middle" x="500" y="98">MR</text><text fill="#fff" font-weight="900" text-anchor="middle" x="750" y="98">VR</text>
+<text class="svg-text" text-anchor="middle" x="110" y="184">Mundo real</text><text class="svg-small" text-anchor="middle" x="110" y="204">sem camadas digitais</text>
+<text class="svg-text" text-anchor="middle" x="300" y="184">Realidade aumentada</text><text class="svg-small" text-anchor="middle" x="300" y="204">digital sobre o real</text>
+<text class="svg-text" text-anchor="middle" x="500" y="184">Realidade mista</text><text class="svg-small" text-anchor="middle" x="500" y="204">digital interage com o espaço</text>
+<text class="svg-text" text-anchor="middle" x="750" y="184">Realidade virtual</text><text class="svg-small" text-anchor="middle" x="750" y="204">ambiente substituído</text>
+<text class="svg-small" text-anchor="middle" x="430" y="238">XR é o termo guarda-chuva que reúne AR, MR, VR e outras experiências imersivas.</text>
+</svg>
+</div>
+<table class="memory-table">
+<thead><tr><th>Termo</th><th>O que o aluno deve memorizar</th><th>Exemplo didático</th></tr></thead>
+<tbody>
+<tr><td><strong>VR</strong></td><td>Substitui a visão do mundo físico por um ambiente virtual completo.</td><td>Entrar em um laboratório virtual para observar uma célula em 3D.</td></tr>
+<tr><td><strong>AR</strong></td><td>Adiciona objetos ou informações digitais sobre o ambiente real.</td><td>Apontar a câmera do celular para a mesa e ver um planeta em 3D.</td></tr>
+<tr><td><strong>MR</strong></td><td>Integra objetos digitais ao espaço real com ancoragem e interação.</td><td>Fixar uma tela virtual na parede e caminhar ao redor dela.</td></tr>
+<tr><td><strong>XR</strong></td><td>Nome geral para experiências de realidade estendida.</td><td>Categoria usada para falar de VR, AR e MR em conjunto.</td></tr>
+</tbody>
+</table>
+<div class="answer-grid">
+<div class="answer-card"><strong>Exercício 1:</strong> um filtro de rede social que coloca óculos digitais no rosto é VR, AR, MR ou XR? Justifique.<div class="answer-box" contenteditable="true" data-placeholder="Digite sua resposta..." data-save-id="rv-diferencas-1"></div></div>
+<div class="answer-card"><strong>Exercício 2:</strong> uma simulação de voo em que o usuário usa headset e não vê o mundo real pertence a qual categoria? Justifique.<div class="answer-box" contenteditable="true" data-placeholder="Digite sua resposta..." data-save-id="rv-diferencas-2"></div></div>
+</div>
+</section><section class="page" id="funcionamento">
+<div class="kicker">3. Funcionamento</div>
+<h2>Como as tecnologias imersivas funcionam</h2>
+<p class="lead">Uma experiência imersiva depende da combinação entre imagem, sensores, processamento, rastreamento, áudio e interação. Mesmo para o aluno iniciante, entender esses blocos ajuda a perceber por que alguns dispositivos são mais realistas, confortáveis ou caros.</p>
+<div class="grid two">
+<div class="card"><span class="pill">Tela e lentes</span><h3>Imagem próxima aos olhos</h3><p>O headset coloca telas muito próximas dos olhos e usa lentes para ampliar a percepção de profundidade. Resolução, nitidez, campo de visão e taxa de atualização afetam a qualidade da experiência.</p></div>
+<div class="card"><span class="pill purple">Sensores</span><h3>Movimento e posição</h3><p>Câmeras, giroscópios, acelerômetros e sensores de profundidade ajudam o dispositivo a identificar para onde o usuário olha e como ele se move.</p></div>
+<div class="card"><span class="pill cyan">Rastreamento</span><h3>6DoF e ambiente</h3><p>Seis graus de liberdade permitem olhar, inclinar, aproximar, afastar, agachar e caminhar dentro de uma área segura.</p></div>
+<div class="card"><span class="pill green">Interação</span><h3>Mãos, controles, voz e olhos</h3><p>O usuário pode interagir usando controles, gestos, rastreamento ocular, comandos de voz ou combinações desses métodos.</p></div>
+</div>
+<div class="diagram"><div class="diagram-title">Fluxo simplificado de uma experiência imersiva</div>
+<svg aria-label="Fluxo: sensores capturam movimento, sistema processa, imagem e som respondem" class="svg-study" role="img" viewbox="0 0 860 270">
+<rect fill="#eef4ff" height="95" rx="18" stroke="#cbd9ff" width="150" x="35" y="65"></rect><text class="svg-text" text-anchor="middle" x="110" y="100">Usuário</text><text class="svg-small" text-anchor="middle" x="110" y="124">olhos, mãos, cabeça</text>
+<rect fill="#e7fbff" height="95" rx="18" stroke="#b9f0f8" width="150" x="245" y="65"></rect><text class="svg-text" text-anchor="middle" x="320" y="100">Sensores</text><text class="svg-small" text-anchor="middle" x="320" y="124">câmeras e movimento</text>
+<rect fill="#f1ebff" height="95" rx="18" stroke="#dbcfff" width="150" x="455" y="65"></rect><text class="svg-text" text-anchor="middle" x="530" y="100">Processamento</text><text class="svg-small" text-anchor="middle" x="530" y="124">cálculo em tempo real</text>
+<rect fill="#e9fbf4" height="95" rx="18" stroke="#bff2dd" width="150" x="665" y="65"></rect><text class="svg-text" text-anchor="middle" x="740" y="100">Resposta</text><text class="svg-small" text-anchor="middle" x="740" y="124">imagem, som e interação</text>
+<path d="M190 112 H240" marker-end="url(#arrow)" stroke="#246bfe" stroke-width="4"></path><path d="M400 112 H450" stroke="#246bfe" stroke-width="4"></path><path d="M610 112 H660" stroke="#246bfe" stroke-width="4"></path>
+<defs><marker id="arrow" markerheight="10" markerwidth="10" orient="auto" refx="8" refy="3"><path d="M0,0 L8,3 L0,6 Z" fill="#246bfe"></path></marker></defs>
+<text class="svg-small" text-anchor="middle" x="430" y="214">Quanto menor a latência entre movimento e resposta visual, mais confortável tende a ser a experiência.</text>
+</svg>
+</div>
+<div class="warning"><div class="callout-title">Atenção ao conforto</div><p>Quando a imagem demora a responder ao movimento da cabeça, pode surgir desconforto, enjoo ou tontura. Por isso, pausas, ambiente seguro e adaptação gradual são parte do uso responsável.</p></div>
+</section><section class="page" id="historia">
+<div class="kicker">4. Evolução</div>
+<h2>Breve história das tecnologias imersivas</h2>
+<p class="lead">As tecnologias imersivas não surgiram de repente. Elas evoluíram junto com telas, sensores, computação gráfica, redes, celulares e inteligência artificial.</p>
+<div class="timeline">
+<div class="time-item"><strong>Décadas de 1950 e 1960</strong> Experimentos sensoriais buscavam simular visão, som e movimento, antecipando a ideia de entrar em outro ambiente.</div>
+<div class="time-item"><strong>Décadas de 1970 e 1980</strong> Simuladores passam a ser usados em treinamento militar, aviação, engenharia e universidades.</div>
+<div class="time-item"><strong>Década de 1990</strong> O termo realidade virtual ganha visibilidade comercial, mas os equipamentos ainda eram caros, pesados e pouco nítidos.</div>
+<div class="time-item"><strong>Anos 2000</strong> Smartphones com câmera, GPS e sensores abrem caminho para a realidade aumentada no cotidiano.</div>
+<div class="time-item"><strong>Anos 2010</strong> Headsets modernos, jogos imersivos e lojas de aplicativos ampliam o acesso à VR.</div>
+<div class="time-item"><strong>Anos 2020</strong> Realidade mista, passthrough colorido, rastreamento das mãos, computação espacial e inteligência artificial tornam as experiências mais integradas.</div>
+</div>
+<div class="answer-card"><strong>Reflexão:</strong> por que essa tecnologia demorou tanto para chegar ao público comum, mesmo existindo há décadas em laboratórios?<div class="answer-box" contenteditable="true" data-placeholder="Digite sua reflexão..." data-save-id="rv-historia-reflexao"></div></div>
+</section><section class="page" id="dispositivos">
+<div class="kicker">5. Equipamentos</div>
+<h2>Dispositivos e equipamentos</h2>
+<p class="lead">A escolha do equipamento muda a experiência. Um celular pode ser suficiente para AR simples, enquanto VR e MR exigem headsets, sensores e maior processamento.</p>
+<div class="device-row">
+<div class="card"><div class="device-icon"><div class="device-svg-wrap"><svg viewBox="0 0 260 130" aria-label="Ilustração realista de smartphone para realidade aumentada" role="img">
+  <defs>
+    <linearGradient id="phoneFrame" x1="0" x2="1">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="50%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#0b1220"/>
+    </linearGradient>
+    <linearGradient id="phoneScreen" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#dbeafe"/>
+      <stop offset="55%" stop-color="#c4f1e2"/>
+      <stop offset="100%" stop-color="#9bdcf5"/>
+    </linearGradient>
+    <linearGradient id="phoneGlow" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#60a5fa" stop-opacity="0.55"/>
+      <stop offset="100%" stop-color="#14b8a6" stop-opacity="0.18"/>
+    </linearGradient>
+  </defs>
+  <ellipse cx="130" cy="112" rx="42" ry="7" fill="#cbd5e1" opacity="0.65"/>
+  <g class="device-shadow">
+    <rect x="93" y="6" width="74" height="116" rx="20" fill="url(#phoneFrame)"/>
+    <rect x="100" y="13" width="60" height="102" rx="15" fill="url(#phoneScreen)" stroke="#d7e3f4" stroke-width="1.5"/>
+    <rect x="118" y="10" width="24" height="4.5" rx="2.2" fill="#334155"/>
+    <circle cx="130" cy="108" r="5.5" fill="#bfd4ef" opacity="0.95" stroke="#a5b4c8"/>
+    <circle cx="130" cy="108" r="1.8" fill="#e8f1ff"/>
+    <circle cx="130" cy="23" r="2.7" fill="#0f172a"/>
+    <circle cx="130" cy="23" r="1.1" fill="#94a3b8"/>
+    <path d="M105 30 C118 24, 144 24, 154 34" fill="none" stroke="#ffffff" stroke-opacity="0.38" stroke-width="3" stroke-linecap="round"/>
+    <rect x="111" y="33" width="38" height="16" rx="8" fill="#ffffff" fill-opacity="0.28"/>
+    <text x="130" y="44" text-anchor="middle" font-size="11" font-weight="800" fill="#1d4ed8">AR</text>
+    <g opacity="0.95">
+      <path d="M114 73 L130 56 L146 73 L130 90 Z" fill="url(#phoneGlow)" stroke="#2563eb" stroke-width="1.8"/>
+      <path d="M114 73 L130 82 L146 73" fill="none" stroke="#14b8a6" stroke-width="1.5"/>
+      <path d="M130 56 L130 82" fill="none" stroke="#60a5fa" stroke-width="1.2"/>
+    </g>
+  </g>
+</svg></div></div><h3>Smartphone</h3><p>Usado para AR por meio da câmera, sensores e tela. É acessível e útil para experiências simples, como filtros, medição, modelos 3D e objetos virtuais.</p></div>
+<div class="card"><div class="device-icon"><div class="device-svg-wrap"><svg viewBox="0 0 260 130" aria-label="Ilustração realista de headset VR e MR" role="img">
+  <defs>
+    <linearGradient id="headsetBody" x1="0" x2="1">
+      <stop offset="0%" stop-color="#cfd8e6"/>
+      <stop offset="45%" stop-color="#eef3fb"/>
+      <stop offset="100%" stop-color="#c1cddd"/>
+    </linearGradient>
+    <linearGradient id="headsetVisor" x1="0" x2="1">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="50%" stop-color="#172554"/>
+      <stop offset="100%" stop-color="#0b1220"/>
+    </linearGradient>
+  </defs>
+  <ellipse cx="130" cy="114" rx="56" ry="8" fill="#cbd5e1" opacity="0.6"/>
+  <g class="device-shadow">
+    <path d="M62 55 C62 34, 82 24, 104 24 L156 24 C178 24, 198 34, 198 55 L198 74 C198 93, 181 103, 158 103 L102 103 C79 103, 62 93, 62 74 Z" fill="url(#headsetBody)" stroke="#c7d2e0" stroke-width="1.6"/>
+    <path d="M86 45 C86 31, 96 24, 111 24 L149 24 C164 24, 174 31, 174 45 L174 57 C174 69, 164 78, 149 78 L111 78 C96 78, 86 69, 86 57 Z" fill="url(#headsetVisor)"/>
+    <path d="M99 28 H161" stroke="#334155" stroke-width="2" stroke-linecap="round" opacity="0.75"/>
+    <path d="M62 57 C49 57, 38 67, 36 83" fill="none" stroke="#94a3b8" stroke-width="7" stroke-linecap="round"/>
+    <path d="M198 57 C211 57, 222 67, 224 83" fill="none" stroke="#94a3b8" stroke-width="7" stroke-linecap="round"/>
+    <path d="M79 33 C92 16, 111 13, 130 13 C149 13, 168 16, 181 33" fill="none" stroke="#e2e8f0" stroke-width="6" stroke-linecap="round" opacity="0.95"/>
+    <ellipse cx="130" cy="45" rx="36" ry="18" fill="#111827" opacity="0.2"/>
+    <path d="M100 40 C116 34, 148 34, 160 42" fill="none" stroke="#94a3b8" stroke-opacity="0.55" stroke-width="3" stroke-linecap="round"/>
+  </g>
+</svg></div></div><h3>Headset VR/MR</h3><p>Colocado na cabeça, cria ambiente virtual ou mistura real e digital. Pode usar controles, mãos, olhos e câmeras de passthrough.</p></div>
+<div class="card"><div class="device-icon"><div class="device-svg-wrap"><svg viewBox="0 0 260 130" aria-label="Ilustração realista de óculos inteligentes" role="img">
+  <defs>
+    <linearGradient id="glassLens" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#dbeafe" stop-opacity="0.95"/>
+      <stop offset="100%" stop-color="#e0f2fe" stop-opacity="0.75"/>
+    </linearGradient>
+    <linearGradient id="glassFrame" x1="0" x2="1">
+      <stop offset="0%" stop-color="#111827"/>
+      <stop offset="100%" stop-color="#334155"/>
+    </linearGradient>
+  </defs>
+  <ellipse cx="130" cy="113" rx="52" ry="7" fill="#cbd5e1" opacity="0.58"/>
+  <g class="device-shadow">
+    <path d="M66 62 C66 51, 74 43, 86 43 H113 C125 43, 133 51, 133 62 V71 C133 82, 125 90, 113 90 H86 C74 90, 66 82, 66 71 Z" fill="url(#glassLens)" stroke="url(#glassFrame)" stroke-width="5"/>
+    <path d="M127 61 H140" stroke="#111827" stroke-width="5" stroke-linecap="round"/>
+    <path d="M140 62 C140 51, 148 43, 160 43 H187 C199 43, 207 51, 207 62 V71 C207 82, 199 90, 187 90 H160 C148 90, 140 82, 140 71 Z" fill="url(#glassLens)" stroke="url(#glassFrame)" stroke-width="5"/>
+    <path d="M64 57 L44 49" stroke="#111827" stroke-width="4" stroke-linecap="round"/>
+    <path d="M209 57 L228 49" stroke="#111827" stroke-width="4" stroke-linecap="round"/>
+    <path d="M86 50 C92 48, 103 48, 109 50" fill="none" stroke="#ffffff" stroke-opacity="0.75" stroke-width="2.4" stroke-linecap="round"/>
+    <path d="M160 50 C166 48, 177 48, 183 50" fill="none" stroke="#ffffff" stroke-opacity="0.75" stroke-width="2.4" stroke-linecap="round"/>
+    <circle cx="98" cy="66" r="6.5" fill="#60a5fa" opacity="0.18"/>
+    <circle cx="173" cy="66" r="6.5" fill="#22d3ee" opacity="0.18"/>
+  </g>
+</svg></div></div><h3>Óculos inteligentes</h3><p>Podem exibir informações no campo de visão, servir como tela portátil ou oferecer experiências de AR mais leves, dependendo do modelo.</p></div>
+</div>
+<table>
+<thead><tr><th>Equipamento</th><th>Uso principal</th><th>Vantagem</th><th>Cuidado</th></tr></thead>
+<tbody>
+<tr><td>Celular com AR</td><td>Visualizar objetos digitais no ambiente real.</td><td>Mais acessível e fácil de testar.</td><td>Depende de câmera, sensores e compatibilidade.</td></tr>
+<tr><td>Headset autônomo</td><td>Jogos, experiências VR e MR sem computador externo.</td><td>Boa mobilidade.</td><td>Exige área segura e pausas.</td></tr>
+<tr><td>Headset conectado ao PC</td><td>Experiências avançadas, simulações e jogos pesados.</td><td>Maior poder gráfico.</td><td>Necessita computador compatível.</td></tr>
+<tr><td>Óculos inteligentes</td><td>Informação contextual, captura, tela portátil ou AR leve.</td><td>Mais discreto.</td><td>Pode ter recursos limitados e questões de privacidade.</td></tr>
+</tbody>
+</table>
+</section><section class="page" id="plataformas">
+<div class="kicker">6. Ecossistemas</div>
+<h2>Plataformas e ecossistemas</h2>
+<p class="lead">As experiências imersivas dependem de plataformas: lojas de aplicativos, sistemas operacionais, bibliotecas de desenvolvimento, navegadores, engines 3D e serviços em nuvem.</p>
+<div class="grid">
+<div class="card"><span class="pill">Lojas de apps</span><h3>Distribuição</h3><p>Reúnem jogos, experiências educacionais, ferramentas de criação, aplicativos de reuniões e demonstrações.</p></div>
+<div class="card"><span class="pill purple">Engines 3D</span><h3>Criação</h3><p>Ambientes como Unity e Unreal são usados para criar mundos virtuais, simulações e interações tridimensionais.</p></div>
+<div class="card"><span class="pill cyan">WebXR</span><h3>Navegador</h3><p>Permite experiências imersivas em páginas web compatíveis, reduzindo a necessidade de instalar aplicativos específicos.</p></div>
+<div class="card"><span class="pill green">Ferramentas educacionais</span><h3>Aprendizagem</h3><p>Apps de anatomia, astronomia, museus virtuais, laboratórios, línguas e simulações científicas.</p></div>
+<div class="card"><span class="pill orange">Reuniões imersivas</span><h3>Colaboração</h3><p>Ambientes virtuais podem reunir pessoas por avatar, tela compartilhada, quadro branco e objetos 3D.</p></div>
+<div class="card"><span class="pill red">IA integrada</span><h3>Assistência</h3><p>Inteligência artificial pode gerar ambientes, orientar usuários, reconhecer objetos ou adaptar experiências.</p></div>
+</div>
+<div class="answer-card"><strong>Pesquisa orientada:</strong> escolha uma plataforma, aplicativo ou dispositivo de XR e descreva para que ele serve, quem usa e quais cuidados exige.<div class="answer-box" contenteditable="true" data-placeholder="Digite sua pesquisa..." data-save-id="rv-plataformas-pesquisa"></div></div>
+</section><section class="page" id="aplicacoes">
+<div class="kicker">7. Uso cotidiano</div>
+<h2>Aplicações práticas no cotidiano</h2>
+<p class="lead">Realidade virtual e aumentada não servem apenas para jogos. Elas ajudam a visualizar informações, treinar situações, testar produtos, visitar espaços e simular tarefas.</p>
+<div class="grid">
+<div class="card"><span class="pill">Educação</span><h3>Aulas mais visuais</h3><p>Explorar o corpo humano, planetas, moléculas, monumentos históricos, máquinas e ambientes difíceis de visitar fisicamente.</p></div>
+<div class="card"><span class="pill purple">Treinamento</span><h3>Praticar sem risco</h3><p>Simular manutenção, atendimento, direção, segurança, primeiros socorros e procedimentos industriais.</p></div>
+<div class="card"><span class="pill cyan">Comércio</span><h3>Experimentar antes de comprar</h3><p>Visualizar móveis, roupas, óculos, maquiagem, decoração e produtos no próprio ambiente.</p></div>
+<div class="card"><span class="pill green">Saúde</span><h3>Visualização e reabilitação</h3><p>Treinamento médico, fisioterapia, planejamento cirúrgico, controle de dor e simulações anatômicas.</p></div>
+<div class="card"><span class="pill orange">Turismo e cultura</span><h3>Visitar sem se deslocar</h3><p>Museus virtuais, reconstruções históricas, passeios 360° e experiências culturais interativas.</p></div>
+<div class="card"><span class="pill red">Trabalho remoto</span><h3>Colaboração espacial</h3><p>Reuniões com quadros virtuais, maquetes 3D, telas flutuantes e ambientes colaborativos.</p></div>
+</div>
+<div class="answer-card"><strong>Aplicação local:</strong> escolha uma situação de sala de aula, curso, treinamento ou atendimento e explique como VR ou AR poderia ajudar o aluno a compreender melhor o conteúdo.<div class="answer-box" contenteditable="true" data-placeholder="Digite sua proposta..." data-save-id="rv-aplicacoes-local"></div></div>
+</section><section class="page" id="seguranca">
+<div class="kicker">8. Uso responsável</div>
+<h2>Segurança, conforto e privacidade</h2>
+<p class="lead">A experiência imersiva envolve corpo, ambiente e dados. Por isso, segurança física, conforto visual e privacidade são tão importantes quanto saber abrir um aplicativo.</p>
+<div class="diagram"><div class="diagram-title">Área segura para VR/MR</div>
+<div class="setup-map"><div class="room"><div class="sofa"></div><div class="table"></div><div class="lamp"></div><div class="safe">Área livre<br/>sem móveis próximos<br/>e sem objetos no chão</div></div>
+<div class="card"><h3>Checklist antes de usar</h3><ul><li>Afaste móveis baixos, objetos frágeis e obstáculos.</li><li>Evite escadas, janelas, portas de vidro e animais próximos.</li><li>Use alças dos controles, quando existirem.</li><li>Comece sentado ou parado se for a primeira experiência.</li><li>Faça pausas diante de enjoo, tontura ou cansaço visual.</li></ul></div></div>
+</div>
+<div class="grid two">
+<div class="card"><h3>Conforto físico</h3><p>Ajuste corretamente o headset, mantenha a lente limpa, regule a distância interpupilar quando disponível e evite uso prolongado sem pausas.</p></div>
+<div class="card"><h3>Privacidade</h3><p>Aplicativos podem acessar câmera, microfone, localização, mãos, olhos e ambiente. Revise permissões e evite usar em locais com dados sensíveis.</p></div>
+<div class="card"><h3>Uso infantil</h3><p>Crianças exigem supervisão, tempo reduzido, conteúdo adequado e respeito às recomendações do fabricante.</p></div>
+<div class="card"><h3>Higiene</h3><p>Limpe superfícies de contato, especialmente quando o equipamento for compartilhado em aulas, laboratórios ou eventos.</p></div>
+</div>
+<div class="answer-card"><strong>Plano de segurança:</strong> descreva como você prepararia uma sala para uma demonstração de VR com alunos iniciantes.<div class="answer-box" contenteditable="true" data-placeholder="Digite o plano de segurança..." data-save-id="rv-seguranca-plano"></div></div>
+</section><section class="page" id="tutoriais">
+<div class="kicker">9. Prática guiada</div>
+<h2>Práticas guiadas de uso</h2>
+<p class="lead">As práticas abaixo foram pensadas para iniciantes. Elas não dependem de equipamentos avançados, mas devem ser realizadas com calma, atenção e supervisão quando necessário.</p>
+<div class="grid two">
+<div class="lab-card"><span class="badge-soft">Prática 1 — AR no smartphone</span><ol><li>Escolha um aplicativo de AR confiável.</li><li>Abra a câmera pelo aplicativo.</li><li>Aponte para uma superfície plana e iluminada.</li><li>Aguarde o aplicativo reconhecer o espaço.</li><li>Insira o objeto 3D e caminhe lentamente ao redor.</li><li>Observe se o objeto parece fixo no ambiente.</li></ol></div>
+<div class="lab-card"><span class="badge-soft">Prática 2 — Primeira experiência VR</span><ol><li>Prepare a área livre.</li><li>Ajuste o headset e os controles.</li><li>Comece com uma experiência curta e confortável.</li><li>Evite jogos de movimento intenso na primeira tentativa.</li><li>Faça pausa após poucos minutos.</li><li>Registre sensações de conforto ou desconforto.</li></ol></div>
+<div class="lab-card"><span class="badge-soft">Prática 3 — Observação de interface</span><ol><li>Identifique menus, botões e forma de selecionar objetos.</li><li>Compare controle físico, gesto de mão e comando de voz.</li><li>Anote qual forma pareceu mais fácil.</li><li>Observe se o sistema ofereceu tutorial inicial.</li></ol></div>
+<div class="lab-card"><span class="badge-soft">Prática 4 — Avaliação de utilidade</span><ol><li>Escolha uma experiência educacional.</li><li>Liste o conteúdo aprendido.</li><li>Compare com uma explicação em vídeo ou texto.</li><li>Indique o que a imersão ajudou e o que atrapalhou.</li></ol></div>
+</div>
+<div class="answer-card"><strong>Registro da prática:</strong> após realizar uma atividade, descreva o que funcionou bem, o que foi difícil e que cuidado você adotaria na próxima vez.<div class="answer-box" contenteditable="true" data-placeholder="Digite seu registro..." data-save-id="rv-tutoriais-registro"></div></div>
+</section><section class="page" id="escolha">
+<div class="kicker">10. Decisão</div>
+<h2>Como escolher o recurso adequado</h2>
+<p class="lead">Nem toda atividade precisa de realidade virtual ou aumentada. A tecnologia deve ser escolhida quando melhora a compreensão, a prática, a visualização ou a segurança do aprendizado.</p>
+<table>
+<thead><tr><th>Objetivo</th><th>Recurso mais adequado</th><th>Justificativa</th></tr></thead>
+<tbody>
+<tr><td>Mostrar um objeto 3D no ambiente real</td><td>AR</td><td>Permite visualizar escala, posição e relação com o espaço físico.</td></tr>
+<tr><td>Simular uma situação perigosa sem risco</td><td>VR</td><td>Cria ambiente controlado para treino sem exposição real.</td></tr>
+<tr><td>Fixar telas virtuais ou modelos no ambiente real</td><td>MR</td><td>Permite ancoragem e interação espacial com objetos digitais.</td></tr>
+<tr><td>Explicar conceito simples com baixo custo</td><td>Vídeo, imagem ou slide</td><td>Nem sempre a imersão é necessária; recursos tradicionais podem ser suficientes.</td></tr>
+</tbody>
+</table>
+<div class="note"><div class="callout-title">Critério didático</div><p>Use XR quando a percepção espacial for importante. Se o aluno precisa entender tamanho, profundidade, movimento, escala, risco ou localização, a tecnologia imersiva pode fazer diferença.</p></div>
+<div class="answer-card"><strong>Estudo de caso:</strong> uma escola quer ensinar sistema solar para alunos iniciantes. Você escolheria VR, AR, MR, vídeo ou slide? Justifique considerando custo, acesso, segurança e aprendizagem.<div class="answer-box" contenteditable="true" data-placeholder="Digite sua análise..." data-save-id="rv-escolha-caso"></div></div>
+</section><section class="page" id="estudo">
+<div class="kicker">11. Revisão orientada</div>
+<h2>Estudo dirigido e revisão</h2>
+<p class="lead">Use esta seção para consolidar as diferenças, os riscos e as aplicações. A revisão deve transformar conceitos soltos em relações claras.</p>
+<div class="review-card">
+<h3>Quadro de comparação rápida</h3>
+<table>
+<thead><tr><th>Pergunta</th><th>Resposta esperada</th></tr></thead>
+<tbody>
+<tr><td>O usuário vê o mundo real?</td><td>Em AR e MR, sim. Em VR, normalmente não diretamente.</td></tr>
+<tr><td>O conteúdo digital ocupa o espaço?</td><td>Em AR, aparece sobre o real; em MR, pode ser ancorado e interagir com superfícies.</td></tr>
+<tr><td>A experiência exige mais cuidado físico?</td><td>VR e MR exigem mais atenção à área segura, pois o usuário pode se mover sem perceber obstáculos.</td></tr>
+<tr><td>Qual recurso é mais acessível para iniciar?</td><td>AR no smartphone tende a ser mais acessível.</td></tr>
+</tbody>
+</table>
+</div>
+<div class="answer-grid">
+<div class="answer-card"><strong>Revisão 1:</strong> escreva uma frase curta diferenciando VR e AR.<div class="answer-box" contenteditable="true" data-placeholder="Digite sua frase..." data-save-id="rv-estudo-1"></div></div>
+<div class="answer-card"><strong>Revisão 2:</strong> escreva uma frase curta diferenciando AR e MR.<div class="answer-box" contenteditable="true" data-placeholder="Digite sua frase..." data-save-id="rv-estudo-2"></div></div>
+</div>
+</section><section class="page" id="atividades">
+<div class="kicker">12. Exercícios</div>
+<h2>Atividades práticas</h2>
+<p class="lead">As atividades abaixo estimulam observação, análise e aplicação prática. Elas podem ser usadas em aula, em estudo individual ou como tarefa avaliativa.</p>
+<div class="answer-grid">
+<div class="answer-card"><strong>1. Classificação:</strong> escolha três aplicativos ou experiências digitais que você conhece e classifique como VR, AR, MR, XR ou nenhum deles. Explique o motivo.<div class="answer-box" contenteditable="true" data-placeholder="Digite sua classificação..." data-save-id="rv-atividade-1"></div></div>
+<div class="answer-card"><strong>2. Comparação:</strong> compare uma aula tradicional com uma aula usando AR. O que melhora? O que pode dificultar?<div class="answer-box" contenteditable="true" data-placeholder="Digite sua comparação..." data-save-id="rv-atividade-2"></div></div>
+<div class="answer-card"><strong>3. Segurança:</strong> liste cinco regras para uso de headset em laboratório escolar.<div class="answer-box" contenteditable="true" data-placeholder="Digite as regras..." data-save-id="rv-atividade-3"></div></div>
+<div class="answer-card"><strong>4. Crítica:</strong> explique por que “usar tecnologia nova” não garante automaticamente melhor aprendizagem.<div class="answer-box" contenteditable="true" data-placeholder="Digite sua crítica..." data-save-id="rv-atividade-4"></div></div>
+</div>
+</section><section class="page" id="projeto">
+<div class="kicker">13. Projeto final</div>
+<h2>Projeto final: planejar uma experiência imersiva</h2>
+<p class="lead">O projeto final consiste em planejar uma atividade de VR, AR ou MR para ensinar, demonstrar ou treinar algum conteúdo. Não é obrigatório desenvolver um aplicativo; o foco é desenhar a proposta pedagógica e operacional.</p>
+<div class="project-card">
+<h3>Roteiro do projeto</h3>
+<div class="rubric">
+<div class="rubric-row"><strong>Tema</strong><span>Qual assunto será ensinado ou demonstrado?</span></div>
+<div class="rubric-row"><strong>Público-alvo</strong><span>Quem vai usar? Crianças, jovens, adultos, alunos iniciantes, profissionais?</span></div>
+<div class="rubric-row"><strong>Tecnologia</strong><span>Será VR, AR, MR ou recurso tradicional? Por quê?</span></div>
+<div class="rubric-row"><strong>Equipamento</strong><span>Celular, headset, computador, tablet, óculos inteligentes ou projetor?</span></div>
+<div class="rubric-row"><strong>Cuidados</strong><span>Quais riscos físicos, digitais e de privacidade precisam ser controlados?</span></div>
+<div class="rubric-row"><strong>Avaliação</strong><span>Como verificar se a experiência realmente ajudou a aprender?</span></div>
+</div>
+</div>
+<div class="answer-card"><strong>Plano do projeto:</strong><div class="answer-box" contenteditable="true" data-placeholder="Digite o plano completo do projeto..." data-save-id="rv-projeto-plano"></div><span class="save-hint">Salvo automaticamente neste navegador</span></div>
+</section><section class="page" id="autoavaliacao">
+<div class="kicker">14. Verificação final</div>
+<h2>Autoavaliação</h2>
+<p class="lead">Use esta página para verificar se os objetivos da ficha foram alcançados. Marque mentalmente o que já domina e volte às seções que ainda geram dúvidas.</p>
+<ul class="checklist">
+<li>Consigo explicar, com minhas palavras, o que é realidade virtual.</li>
+<li>Consigo diferenciar realidade aumentada de realidade mista.</li>
+<li>Entendo que XR é um termo guarda-chuva.</li>
+<li>Reconheço os principais dispositivos: smartphone, headset, óculos inteligentes, controles e sensores.</li>
+<li>Sei por que latência, resolução, campo de visão e rastreamento influenciam a experiência.</li>
+<li>Consigo citar aplicações em educação, saúde, comércio, turismo, trabalho ou treinamento.</li>
+<li>Sei preparar uma área segura para uso de headset.</li>
+<li>Entendo riscos de privacidade relacionados a câmera, microfone, ambiente e dados corporais.</li>
+<li>Consigo escolher entre VR, AR, MR ou recurso tradicional de acordo com o objetivo da atividade.</li>
+<li>Consegui elaborar uma proposta simples de experiência imersiva.</li>
+</ul>
+<div class="answer-card"><strong>Minha maior dificuldade neste estudo foi:</strong><div class="answer-box" contenteditable="true" data-placeholder="Digite sua dificuldade principal..." data-save-id="rv-autoavaliacao-dificuldade"></div></div>
+</section><section class="page" id="glossario">
+<div class="kicker">15. Vocabulário essencial</div>
+<h2>Glossário básico</h2>
+<p class="lead">Consulte este glossário durante as atividades. O domínio do vocabulário ajuda a evitar confusões entre tecnologias parecidas.</p>
+<div class="glossary">
+<div class="term"><strong>AR</strong>Realidade aumentada. Adiciona elementos digitais ao mundo real.</div>
+<div class="term"><strong>VR</strong>Realidade virtual. Substitui o ambiente real por um ambiente digital imersivo.</div>
+<div class="term"><strong>MR</strong>Realidade mista. Integra objetos digitais ao espaço real com ancoragem e interação.</div>
+<div class="term"><strong>XR</strong>Realidade estendida. Termo geral que reúne VR, AR e MR.</div>
+<div class="term"><strong>Imersão</strong>Sensação de envolvimento em um ambiente ou conteúdo digital.</div>
+<div class="term"><strong>Presença</strong>Sensação psicológica de estar dentro da experiência.</div>
+<div class="term"><strong>Passthrough</strong>Visualização do mundo real por meio das câmeras do headset.</div>
+<div class="term"><strong>Mapeamento espacial</strong>Reconhecimento de paredes, chão, móveis e objetos pelo sistema.</div>
+<div class="term"><strong>Campo de visão</strong>Quantidade de espaço visual percebido sem virar a cabeça.</div>
+<div class="term"><strong>Latência</strong>Atraso entre movimento do usuário e resposta do sistema.</div>
+<div class="term"><strong>6DoF</strong>Seis graus de liberdade: movimentação e rotação em várias direções.</div>
+<div class="term"><strong>Tracking</strong>Rastreamento da cabeça, mãos, controles, olhos ou ambiente.</div>
+</div>
+</section><section class="page" id="referencias">
+<div class="kicker">Base do material</div>
+<h2>Referências utilizadas</h2>
+<p class="lead">Esta ficha foi adaptada a partir da página HTML original sobre Realidade Virtual e Realidade Aumentada enviada para atualização. O conteúdo foi reorganizado em formato de estudo ativo, com perguntas, atividades, práticas guiadas, revisão e autoavaliação.</p>
+<div class="summary-box"><h3>Resumo final</h3><p>Realidade virtual, aumentada e mista são recursos de realidade estendida que mudam a relação entre usuário, tela, espaço e informação. O uso adequado depende de objetivo claro, equipamento compatível, segurança física, conforto, privacidade e uma boa justificativa pedagógica ou prática.</p></div>
+</section></div>
+</div>
+</section>
+</main>
+<script>
+(function () {
+  const stage = document.getElementById("viewerStage");
+  const book = document.getElementById("bookPages");
+  const pages = book ? Array.from(book.querySelectorAll(".page")) : [];
+  const sidebarLinks = Array.from(document.querySelectorAll("#sidebarNav a"));
+  const topLinks = Array.from(document.querySelectorAll(".topbar .nav a"));
+  const pageLinks = Array.from(document.querySelectorAll('a[href^="#"]'));
+  const prevBtn = document.getElementById("prevPage");
+  const nextBtn = document.getElementById("nextPage");
+  const status = document.getElementById("viewerStatus");
+  const scalePreference = document.getElementById("scalePreference");
+  const scaleNote = document.getElementById("scaleNote");
+
+  if (!stage || pages.length === 0 || !prevBtn || !nextBtn || !status) {
+    return;
+  }
+
+  function prepareContentWrappers() {
+    pages.forEach((page) => {
+      if (page.querySelector(":scope > .page-content")) {
+        return;
+      }
+
+      const wrapper = document.createElement("div");
+      wrapper.className = "page-content";
+
+      while (page.firstChild) {
+        wrapper.appendChild(page.firstChild);
+      }
+
+      page.appendChild(wrapper);
+    });
+  }
+
+  function isDesktopViewer() {
+    return window.matchMedia("(min-width: 1081px)").matches;
+  }
+
+  let activeIndex = 0;
+
+  function indexFromHash() {
+    const hash = window.location.hash.replace("#", "");
+    if (!hash) {
+      return 0;
+    }
+
+    const found = pages.findIndex((page) => page.id === hash);
+    return found >= 0 ? found : 0;
+  }
+
+  function fitActivePage() {
+    if (!isDesktopViewer()) {
+      stage.classList.remove("is-scaled");
+      stage.classList.remove("mode-reading", "mode-fit");
+      return;
+    }
+
+    const page = pages[activeIndex];
+    const content = page.querySelector(":scope > .page-content");
+    if (!content) {
+      return;
+    }
+
+    const preference = scalePreference ? scalePreference.value : "reading";
+    stage.classList.toggle("mode-reading", preference === "reading");
+    stage.classList.toggle("mode-fit", preference === "fit");
+    content.classList.toggle("tight-mode", preference === "fit");
+
+    if (preference === "reading") {
+      content.style.transform = "none";
+      content.style.width = "auto";
+      stage.classList.remove("is-scaled");
+
+      if (scaleNote) {
+        scaleNote.textContent = "Modo leitura · rolagem ativa";
+      }
+
+      return;
+    }
+
+    content.style.transform = "scale(1)";
+    content.style.width = "100%";
+
+    const paddingAllowance = 4;
+    const availableW = page.clientWidth - paddingAllowance;
+    const availableH = page.clientHeight - paddingAllowance;
+    const naturalW = content.scrollWidth;
+    const naturalH = content.scrollHeight;
+
+    if (!naturalW || !naturalH) {
+      return;
+    }
+
+    const ratioW = availableW / naturalW;
+    const ratioH = availableH / naturalH;
+    let scale = Math.min(1, ratioW, ratioH);
+
+    const minScale = 0.56;
+    scale = Math.max(minScale, scale);
+
+    const forcedFit = Math.min(1, ratioW, ratioH);
+    if (scale > forcedFit) {
+      scale = forcedFit;
+    }
+
+    content.style.transform = "scale(" + scale + ")";
+    content.style.width = (100 / scale) + "%";
+    stage.classList.toggle("is-scaled", scale < 0.999);
+
+    if (scaleNote) {
+      const percent = Math.round(scale * 100);
+      scaleNote.textContent = "Modo reduzido · " + percent + "%";
+    }
+  }
+
+  function syncActiveLinks() {
+    const id = pages[activeIndex].id;
+
+    sidebarLinks.forEach((link) => {
+      link.classList.toggle("active", link.getAttribute("href") === "#" + id);
+    });
+
+    topLinks.forEach((link) => {
+      link.classList.toggle("active", link.getAttribute("href") === "#" + id);
+    });
+  }
+
+  function updateStatus() {
+    status.textContent = "Capítulo " + (activeIndex + 1) + " de " + pages.length;
+    prevBtn.disabled = activeIndex === 0;
+    nextBtn.disabled = activeIndex === pages.length - 1;
+  }
+
+  function showPage(index, updateHash) {
+    activeIndex = Math.max(0, Math.min(pages.length - 1, index));
+
+    pages.forEach((page, i) => {
+      page.classList.toggle("active", i === activeIndex);
+      page.setAttribute("aria-hidden", i === activeIndex ? "false" : "true");
+    });
+
+    updateStatus();
+    syncActiveLinks();
+    fitActivePage();
+
+    if (updateHash) {
+      history.replaceState(null, "", "#" + pages[activeIndex].id);
+    }
+  }
+
+  function handleLinkClick(event) {
+    const link = event.currentTarget;
+    const href = link.getAttribute("href") || "";
+
+    if (!href.startsWith("#")) {
+      return;
+    }
+
+    const id = href.slice(1);
+    const idx = pages.findIndex((page) => page.id === id);
+
+    if (idx < 0) {
+      return;
+    }
+
+    if (isDesktopViewer()) {
+      event.preventDefault();
+      showPage(idx, true);
+    }
+  }
+
+  pageLinks.forEach((link) => link.addEventListener("click", handleLinkClick));
+
+  prevBtn.addEventListener("click", () => showPage(activeIndex - 1, true));
+  nextBtn.addEventListener("click", () => showPage(activeIndex + 1, true));
+
+  if (scalePreference) {
+    scalePreference.addEventListener("change", () => {
+      showPage(activeIndex, false);
+    });
+  }
+
+  document.addEventListener("keydown", (event) => {
+    const target = event.target;
+    const isTyping = target && (target.isContentEditable || ["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName));
+    if (isTyping || !isDesktopViewer()) {
+      return;
+    }
+
+    if (event.key === "ArrowRight") {
+      showPage(activeIndex + 1, true);
+    }
+
+    if (event.key === "ArrowLeft") {
+      showPage(activeIndex - 1, true);
+    }
+  });
+
+  window.addEventListener("resize", () => {
+    if (!isDesktopViewer()) {
+      stage.classList.remove("is-scaled");
+      stage.classList.remove("mode-reading", "mode-fit");
+
+      pages.forEach((page) => {
+        const content = page.querySelector(":scope > .page-content");
+        if (content) {
+          content.style.transform = "none";
+          content.style.width = "auto";
+          content.classList.remove("tight-mode");
+        }
+
+        page.classList.add("active");
+        page.setAttribute("aria-hidden", "false");
+      });
+
+      return;
+    }
+
+    showPage(activeIndex, false);
+  });
+
+  prepareContentWrappers();
+
+  const initial = indexFromHash();
+
+  if (isDesktopViewer()) {
+    showPage(initial, false);
+  } else {
+    activeIndex = initial;
+    pages.forEach((page) => {
+      page.classList.add("active");
+      page.setAttribute("aria-hidden", "false");
+    });
+    updateStatus();
+    syncActiveLinks();
+  }
+})();
+  </script>
+<script>
+(function () {
+  const STORAGE_PREFIX = "ficha-rv-ar-";
+  const boxes = Array.from(document.querySelectorAll(".answer-box[contenteditable][data-save-id]"));
+
+  function storageKey(box) {
+    return STORAGE_PREFIX + box.getAttribute("data-save-id");
+  }
+
+  boxes.forEach((box) => {
+    const saved = localStorage.getItem(storageKey(box));
+    if (saved !== null) {
+      box.innerHTML = saved;
+    }
+
+    box.addEventListener("input", () => {
+      localStorage.setItem(storageKey(box), box.innerHTML);
+    });
+
+    box.addEventListener("paste", (event) => {
+      event.preventDefault();
+      const text = (event.clipboardData || window.clipboardData).getData("text/plain");
+      document.execCommand("insertText", false, text);
+    });
+  });
+})();
+</script></body>
+</html>
